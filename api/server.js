@@ -1,6 +1,3 @@
-const express = require("express");
-const helmet = require("helmet");
-const cors = require("cors");
 
 /**
   Kullanıcı oturumlarını desteklemek için `express-session` paketini kullanın!
@@ -9,17 +6,43 @@ const cors = require("cors");
   ve `req.session` nesnesini, kullanıcı giriş yapana kadar değiştirmeyin.
 
   Kimlik doğrulaması yapan kullanıcıların sunucuda kalıcı bir oturumu ve istemci tarafında bir cookiesi olmalıdır,
-  Cookienin adı "cikolatacips" olmalıdır.
+  ips"Cookienin adı "cikolatac olmalıdır.
 
   Oturum memory'de tutulabilir (Production ortamı için uygun olmaz)
   veya "connect-session-knex" gibi bir oturum deposu kullanabilirsiniz.
  */
-
-const server = express();
+  const express = require("express");
+  const helmet = require("helmet");
+  const cors = require("cors");
+  const session = require("express-session");
+  //SESSION ' A DAİR BİR STORE YARAT
+  const Store = require("connect-session-knex")(session)
+  const server = express();
 
 server.use(helmet());
 server.use(express.json());
 server.use(cors());
+
+//SESSION TANIMLAMA
+server.use(session({
+    name:"cikolotacips",
+    secret:"cikolata_cips",
+    cookie:{
+      maxAge:1000*60*60,
+      //HTTP REQUIEST ICIN :FALSE -- HTTPS REQUIEST ICIN :TRUE
+      secure:false,
+      httpOnly:true
+    },
+    //TEKRAR TEKRAR ÜSTÜNE YAZILMAMASI ICIN
+    resave:false,
+    //server ayaga kalktığında direk session oluşturmayacak
+    saveUninitialized:false,
+    store: new Store({
+      
+    })
+
+
+}))
 
 server.get("/", (req, res) => {
   res.json({ api: "up" });
