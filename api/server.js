@@ -11,10 +11,12 @@
   Oturum memory'de tutulabilir (Production ortamı için uygun olmaz)
   veya "connect-session-knex" gibi bir oturum deposu kullanabilirsiniz.
  */
+  const users = require("./users/users-router.js");
   const express = require("express");
   const helmet = require("helmet");
   const cors = require("cors");
   const session = require("express-session");
+  const authRouter = require("./auth/auth-router");
   //SESSION ' A DAİR BİR STORE YARAT
   const Store = require("connect-session-knex")(session)
   const server = express();
@@ -44,6 +46,8 @@ server.use(session({
 
 }))
 
+server.use("/api/auth", authRouter);
+server.use("/api/users", users);
 server.get("/", (req, res) => {
   res.json({ api: "up" });
 });

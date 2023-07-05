@@ -1,7 +1,8 @@
 
 
-
+const {HASH_ROUND} = require("../../config");
 const UserModel = require("../users/users-model");
+const bcrypt = require("bcryptjs");
 
 /*
   Kullanıcının sunucuda kayıtlı bir oturumu yoksa
@@ -43,7 +44,7 @@ async function usernameBostami(req,res,next) {
       if(existUser.length > 0){
         res.status(422).json({message:"Username kullaniliyor"})
       }else{
-        next()
+        next();
       }
     }catch(error){
       next(error);  
@@ -61,7 +62,16 @@ async function usernameBostami(req,res,next) {
     "message": "Geçersiz kriter"
   }
 */
-function usernameVarmi() {
+async function usernameVarmi() {
+  const {username} = req.body;
+  const [user] = await UserModel.goreBul({username:use})
+  if(!user) {
+    res.status(401).json({message:"Geçersiz kriter"})
+    
+  }else{
+    next();
+  }
+
 
 }
 
@@ -78,8 +88,16 @@ function sifreGecerlimi() {
     if(!password || password.length <3){
       res.status(422).json({message:"Şifre 3 karakterden fazla olmamlı"})
     }else{
-      const hashedPassword = bcrypt.hashedPassword
+      const hashedPassword = bcrypt.hashSync(password , HASH_ROUND);
     }
 }
 
 // Diğer modüllerde kullanılabilmesi için fonksiyonları "exports" nesnesine eklemeyi unutmayın.
+
+module.exports = {
+  sifreGecerlimi,
+  usernameVarmi,
+  usernameBostami,
+  sinirli
+
+}
