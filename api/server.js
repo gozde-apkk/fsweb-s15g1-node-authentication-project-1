@@ -11,7 +11,7 @@
   Oturum memory'de tutulabilir (Production ortamı için uygun olmaz)
   veya "connect-session-knex" gibi bir oturum deposu kullanabilirsiniz.
  */
-  const users = require("./users/users-router.js");
+  const users = require("./users/users-router");
   const express = require("express");
   const helmet = require("helmet");
   const cors = require("cors");

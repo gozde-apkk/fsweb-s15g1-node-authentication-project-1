@@ -62,9 +62,9 @@ async function usernameBostami(req,res,next) {
     "message": "Geçersiz kriter"
   }
 */
-async function usernameVarmi() {
+async function usernameVarmi(req,res,next) {
   const {username} = req.body;
-  const [user] = await UserModel.goreBul({username:use})
+  const user = await UserModel.goreBul({username:username})
   if(!user) {
     res.status(401).json({message:"Geçersiz kriter"})
     
@@ -83,12 +83,14 @@ async function usernameVarmi() {
     "message": "Şifre 3 karakterden fazla olmalı"
   }
 */
-function sifreGecerlimi() {
+function sifreGecerlimi(req,res,next) {
     const {password} = req.body;
     if(!password || password.length <3){
       res.status(422).json({message:"Şifre 3 karakterden fazla olmamlı"})
     }else{
       const hashedPassword = bcrypt.hashSync(password , HASH_ROUND);
+      req.hashedPassword= hashedPassword;
+      next();
     }
 }
 

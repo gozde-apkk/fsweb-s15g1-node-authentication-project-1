@@ -30,7 +30,7 @@ const mw = require("./auth-middleware");
  */
 
 
-  router.post("/register", mw.usernameBostami, mw.sifreGecerlimi, async (req,res,next) =>{
+  router.post("/register", mw.usernameBostami,mw.sifreGecerlimi, async (req,res,next) =>{
         const {username} = req.body;
         try{
             await UserModel.ekle({username: username , password : req.hashedPassword});
@@ -85,27 +85,18 @@ router.post("/login" ,mw.usernameVarmi, (req,res,next) => {
   }
  */
   router.get("/logout", (req, res, next) => {
-    try {
-      if (req.session.user) {
-        req.session.destroy((err) => {
-          if (err) {
-            next({
-              message: "Hata",
-            });
-          } else {
-            next({
-              status: 200,
-              message: "çıkış yapildi",
-            });
-          }
-        });
-      } else {
-        next({
-          status: 200,
-          message: "oturum bulunamadı!",
-        });
+   if(req.session && req.session.user ){
+    req.session.destroy(error =>{
+      if(error){
+        next({message: 'Session silinirken hata oluştu'});
+      }else{
+        res.set("Set-Cookie", "cikolatacips=;");
+        res.json({message:"Çıkış yapildi"})
       }
-    } catch (error) {}
+    })
+   }else{
+     res.json({message:"Oturum bulunamadı"})
+   }
   });
   
  
